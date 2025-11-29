@@ -19,7 +19,7 @@ const DesktopIcon = ({ label, icon: Icon, onClick, color }: any) => (
     </div>
 )
 
-const AppContainer = ({ title, children }: { title: string, children: React.ReactNode }) => (
+const AppContainer = ({ title, children }: { title: string, children?: React.ReactNode }) => (
     <div className="mb-8">
         <h3 className="text-xs font-bold text-slate-400 uppercase mb-4 pl-4">{title}</h3>
         <div className="flex flex-wrap gap-2">
