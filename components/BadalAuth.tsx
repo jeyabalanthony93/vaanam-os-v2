@@ -1,6 +1,9 @@
 
+
+
 import React, { useState } from 'react';
-import { Shield, Users, Key, Lock, Globe, Smartphone, Activity, CheckCircle2, AlertTriangle, Fingerprint, RefreshCw, UserPlus, ToggleLeft, ToggleRight, Info, Plus, Check, Settings, LogOut, Mail, Link } from 'lucide-react';
+import { Shield, Users, Key, Lock, Globe, Smartphone, Activity, CheckCircle2, AlertTriangle, Fingerprint, RefreshCw, UserPlus, ToggleLeft, ToggleRight, Info, Plus, Check, Settings, LogOut, Mail, Link, Zap } from 'lucide-react';
+import { registerThirdPartyService } from '../services/geminiService';
 
 interface Role {
     id: string;
@@ -34,7 +37,7 @@ const ALL_PERMISSIONS = [
 ];
 
 const BadalAuth: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'USERS' | 'ROLES' | 'SSO' | 'TOKENS' | 'SETTINGS'>('USERS');
+  const [activeTab, setActiveTab] = useState<'USERS' | 'ROLES' | 'SSO' | 'TOKENS' | 'SETTINGS' | 'DATA_FEEDS'>('USERS');
   
   // Users State
   const [users, setUsers] = useState([
@@ -81,6 +84,13 @@ const BadalAuth: React.FC = () => {
       { id: 'badal', name: 'Badal Cloud ID', connected: true, email: 'root@badal.io' }
   ]);
 
+  // Data Feeds State
+  const [dataFeeds, setDataFeeds] = useState([
+      { id: 'alpha', name: 'Alpha Vantage', category: 'Finance', status: 'DISCONNECTED', key: '', loading: false },
+      { id: 'openweather', name: 'OpenWeatherMap', category: 'Weather', status: 'DISCONNECTED', key: '', loading: false },
+      { id: 'newsapi', name: 'NewsAPI', category: 'News', status: 'DISCONNECTED', key: '', loading: false },
+  ]);
+
   const togglePermission = (permId: string) => {
       if (selectedRole.isSystem && selectedRole.name === 'Owner') return; // Prevent locking owner out
       
@@ -102,6 +112,23 @@ const BadalAuth: React.FC = () => {
       setLinkedAccounts(prev => prev.map(acc => acc.id === id ? { ...acc, connected: !acc.connected } : acc));
   };
 
+  const handleConnectFeed = async (feedId: string) => {
+      const feed = dataFeeds.find(f => f.id === feedId);
+      if (!feed) return;
+
+      if (feed.status === 'CONNECTED') {
+          // Disconnect
+          setDataFeeds(prev => prev.map(f => f.id === feedId ? { ...f, status: 'DISCONNECTED', key: '' } : f));
+          return;
+      }
+
+      // Connect
+      setDataFeeds(prev => prev.map(f => f.id === feedId ? { ...f, loading: true } : f));
+      const res = await registerThirdPartyService(feed.name, 'jeyabalanthony9@gmail.com');
+      
+      setDataFeeds(prev => prev.map(f => f.id === feedId ? { ...f, loading: false, status: 'CONNECTED', key: res.key } : f));
+  };
+
   return (
     <div className="h-full flex flex-col bg-slate-950 text-slate-200 font-sans">
       {/* Header */}
@@ -120,6 +147,7 @@ const BadalAuth: React.FC = () => {
                 { id: 'USERS', icon: Users, label: 'Users' },
                 { id: 'ROLES', icon: Lock, label: 'Roles' },
                 { id: 'SSO', icon: Globe, label: 'SSO & Fed' },
+                { id: 'DATA_FEEDS', icon: Zap, label: 'Data Connectors' },
                 { id: 'TOKENS', icon: Key, label: 'API Keys' },
                 { id: 'SETTINGS', icon: Settings, label: 'Settings' }
             ].map(tab => (
@@ -258,6 +286,53 @@ const BadalAuth: React.FC = () => {
                           <button className="px-4 py-2 text-sm text-slate-400 hover:text-white transition">Reset Defaults</button>
                           <button className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg transition shadow-lg shadow-indigo-900/20">Save Changes</button>
                       </div>
+                  </div>
+              </div>
+          )}
+
+          {activeTab === 'DATA_FEEDS' && (
+              <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300">
+                  <div className="bg-gradient-to-r from-blue-900/20 to-cyan-900/20 border border-blue-500/30 p-6 rounded-xl mb-8">
+                      <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2"><Activity className="text-cyan-400"/> Real-time Data Integrations</h2>
+                      <p className="text-sm text-slate-400">Connect external APIs to power alerts and live feeds across the OS. We handle the authentication for you.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4">
+                      {dataFeeds.map(feed => (
+                          <div key={feed.id} className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex justify-between items-center hover:border-blue-500/30 transition">
+                              <div className="flex items-center gap-4">
+                                  <div className={`p-3 rounded-lg ${feed.id === 'alpha' ? 'bg-green-900/20 text-green-400' : feed.id === 'openweather' ? 'bg-orange-900/20 text-orange-400' : 'bg-purple-900/20 text-purple-400'}`}>
+                                      <Zap size={24}/>
+                                  </div>
+                                  <div>
+                                      <h3 className="font-bold text-white text-lg">{feed.name}</h3>
+                                      <div className="flex items-center gap-2 mt-1">
+                                          <span className="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400">{feed.category}</span>
+                                          <span className={`text-xs font-bold ${feed.status === 'CONNECTED' ? 'text-green-400' : 'text-slate-500'}`}>
+                                              {feed.status === 'CONNECTED' ? '● Live' : '○ Inactive'}
+                                          </span>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div className="flex items-center gap-6">
+                                  {feed.status === 'CONNECTED' && (
+                                      <div className="text-right">
+                                          <div className="text-[10px] text-slate-500 uppercase font-bold">API Key</div>
+                                          <div className="font-mono text-xs text-blue-300 bg-black/30 px-2 py-1 rounded truncate w-32">{feed.key}</div>
+                                      </div>
+                                  )}
+                                  <button 
+                                    onClick={() => handleConnectFeed(feed.id)}
+                                    disabled={feed.loading}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 ${feed.status === 'CONNECTED' ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-blue-600 text-white hover:bg-blue-500'}`}
+                                  >
+                                      {feed.loading ? <RefreshCw size={14} className="animate-spin"/> : <Link size={14}/>}
+                                      {feed.loading ? 'Registering...' : feed.status === 'CONNECTED' ? 'Disconnect' : 'Auto-Connect'}
+                                  </button>
+                              </div>
+                          </div>
+                      ))}
                   </div>
               </div>
           )}

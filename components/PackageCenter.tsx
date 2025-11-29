@@ -4,8 +4,12 @@
 
 
 
+
+
+
+
 import React, { useState } from 'react';
-import { Package, Download, Search, Server, Database, Code, Shield, Box, CheckCircle2, Zap, Layers, BarChart3, Cpu, CreditCard, BookOpen, Terminal, Play, Wand2, Copy, Loader2, Settings, Layout, Globe, Lock, Video, Image as ImageIcon, Smartphone, Cloud, GitBranch, Key, Activity, Lightbulb, FileCode, ArrowRight, X, Music, Radio, Megaphone, Atom } from 'lucide-react';
+import { Package, Download, Search, Server, Database, Code, Shield, Box, CheckCircle2, Zap, Layers, BarChart3, Cpu, CreditCard, BookOpen, Terminal, Play, Wand2, Copy, Loader2, Settings, Layout, Globe, Lock, Video, Image as ImageIcon, Smartphone, Cloud, GitBranch, Key, Activity, Lightbulb, FileCode, ArrowRight, X, Music, Radio, Megaphone, Atom, Network } from 'lucide-react';
 import { generatePackageScript } from '../services/geminiService';
 
 interface PackageItem {
@@ -32,6 +36,13 @@ interface SolutionRecipe {
 }
 
 const PACKAGES: PackageItem[] = [
+  // --- NEW: REAL-TIME DATA & ALERTS ---
+  { id: 'yfinance', name: 'yfinance', category: 'DATA', description: 'Access financial data from Yahoo Finance.', version: '0.2.36', installed: false, icon: BarChart3, tags: ['Finance', 'Stocks'], installCmd: 'pip install yfinance', configSnippet: 'import yfinance as yf' },
+  { id: 'alpha-vantage', name: 'Alpha Vantage', category: 'DATA', description: 'Real-time stock APIs (Free Tier).', version: '2.3.1', installed: false, icon: Activity, tags: ['API', 'Forex'], installCmd: 'pip install alpha_vantage', configSnippet: 'from alpha_vantage.timeseries import TimeSeries' },
+  { id: 'pathway', name: 'Pathway', category: 'DATA', description: 'Real-time stream processing & analytics.', version: '0.1.0', installed: false, icon: Zap, tags: ['Streaming', 'ETL'], installCmd: 'pip install pathway', configSnippet: 'import pathway as pw' },
+  { id: 'news-fetch', name: 'news-fetch', category: 'DATA', description: 'Extract news from any website.', version: '0.4.2', installed: false, icon: Globe, tags: ['Scraping', 'News'], installCmd: 'pip install news-fetch', configSnippet: 'from newsfetch.news import newspaper' },
+  { id: 'pandas-ta', name: 'pandas-ta', category: 'DATA', description: 'Technical Analysis library for Pandas.', version: '0.3.14', installed: false, icon: Database, tags: ['TA', 'Finance'], installCmd: 'pip install pandas_ta', configSnippet: 'import pandas_ta as ta' },
+
   // --- NEW: QUANTUM COMPUTING ---
   { id: 'qiskit', name: 'Qiskit', category: 'QUANTUM', description: 'Open-source SDK for working with quantum computers (IBM).', version: '1.0.0', installed: true, icon: Atom, tags: ['Quantum', 'IBM'], installCmd: 'pip install qiskit', configSnippet: 'from qiskit import QuantumCircuit' },
   { id: 'cirq', name: 'Cirq', category: 'QUANTUM', description: 'Framework for NISQ circuits (Google).', version: '1.3.0', installed: false, icon: Atom, tags: ['Quantum', 'NISQ'], installCmd: 'pip install cirq', configSnippet: 'import cirq' },
@@ -82,7 +93,7 @@ const PACKAGES: PackageItem[] = [
   { id: 'juce', name: 'JUCE', category: 'AUDIO', description: 'C++ framework for audio applications and plugins.', version: '7.0.9', installed: false, icon: Radio, tags: ['VST', 'C++'], installCmd: 'git clone https://github.com/juce-framework/JUCE.git', configSnippet: '#include <JuceHeader.h>' },
   { id: 'ffmpeg', name: 'FFmpeg', category: 'AUDIO', description: 'Complete solution to record, convert and stream audio/video.', version: '6.1', installed: true, icon: Terminal, tags: ['CLI', 'Media'], installCmd: 'apt-get install ffmpeg', configSnippet: 'ffmpeg -i input.mp4 output.mp3' },
 
-  // --- NEW: MARKETING ---
+  // --- EXISTING MARKETING ---
   { id: 'mautic', name: 'Mautic', category: 'MARKETING', description: 'Open Source Marketing Automation Platform.', version: '5.0.0', installed: false, icon: Megaphone, tags: ['Automation', 'Email'], installCmd: 'composer create-project mautic/recommended-project', configSnippet: 'php bin/console mautic:segments:update' },
   { id: 'matomo', name: 'Matomo', category: 'MARKETING', description: 'Google Analytics alternative that protects your data.', version: '5.0.2', installed: false, icon: BarChart3, tags: ['Analytics', 'Privacy'], installCmd: 'apt-get install matomo', configSnippet: './console core:archive' },
   { id: 'ghost', name: 'Ghost', category: 'MARKETING', description: 'Turn your audience into a business. Publishing platform.', version: '5.79.0', installed: false, icon: FileCode, tags: ['CMS', 'Blog'], installCmd: 'npm install ghost-cli -g', configSnippet: 'ghost install' },
@@ -128,7 +139,16 @@ const PACKAGES: PackageItem[] = [
   { id: 'mlflow', name: 'MLflow', category: 'DATA', description: 'Manage the ML lifecycle (experiments, deployment).', version: '2.10.2', installed: false, icon: Activity, tags: ['MLOps'], installCmd: 'pip install mlflow', configSnippet: 'mlflow ui' },
   { id: 'superset', name: 'Apache Superset', category: 'DATA', description: 'Modern data exploration and visualization platform.', version: '3.1.0', installed: false, icon: BarChart3, tags: ['Analytics', 'BI'], installCmd: 'pip install apache-superset', configSnippet: 'superset run' },
 
-  // --- EXISTING Security ---
+  // --- SECURITY (Enhanced) ---
+  { id: 'kali-linux', name: 'Kali Linux', category: 'SECURITY', description: 'Advanced Penetration Testing Linux distribution.', version: '2024.1', installed: false, icon: Terminal, tags: ['PenTest', 'OS'], installCmd: 'docker run -t -i kalilinux/kali-rolling /bin/bash', configSnippet: 'apt update && apt install kali-linux-headless' },
+  { id: 'keepass', name: 'KeePass', category: 'SECURITY', description: 'Open source password manager.', version: '2.56', installed: false, icon: Key, tags: ['Password', 'Vault'], installCmd: 'apt-get install keepass2', configSnippet: 'keepass2' },
+  { id: 'metasploit', name: 'Metasploit', category: 'SECURITY', description: 'Penetration testing framework.', version: '6.3.55', installed: false, icon: Shield, tags: ['Exploit', 'Ruby'], installCmd: 'curl ... | bash', configSnippet: 'msfconsole' },
+  { id: 'nikto', name: 'Nikto', category: 'SECURITY', description: 'Web server scanner.', version: '2.5.0', installed: false, icon: Search, tags: ['Scanner', 'Perl'], installCmd: 'apt-get install nikto', configSnippet: 'nikto -h http://localhost' },
+  { id: 'nmap', name: 'Nmap', category: 'SECURITY', description: 'Network exploration tool and security scanner.', version: '7.94', installed: true, icon: Network, tags: ['Scanner', 'Discovery'], installCmd: 'apt-get install nmap', configSnippet: 'nmap -A 192.168.1.1' },
+  { id: 'openvas', name: 'OpenVAS', category: 'SECURITY', description: 'Full-featured vulnerability scanner.', version: '22.4', installed: false, icon: Activity, tags: ['Scanner', 'Vuln'], installCmd: 'docker run openvas', configSnippet: 'omp -u admin' },
+  { id: 'ossec', name: 'OSSEC', category: 'SECURITY', description: 'Host-based Intrusion Detection System (HIDS).', version: '3.7.0', installed: false, icon: Shield, tags: ['HIDS', 'Log'], installCmd: 'yum install ossec-hids-server', configSnippet: '/var/ossec/bin/ossec-control start' },
+  { id: 'security-onion', name: 'Security Onion', category: 'SECURITY', description: 'Linux distro for intrusion detection and NSM.', version: '2.4.40', installed: false, icon: Layers, tags: ['SIEM', 'NSM'], installCmd: 'git clone ...', configSnippet: 'sudo so-status' },
+  { id: 'veracrypt', name: 'VeraCrypt', category: 'SECURITY', description: 'Disk encryption software.', version: '1.26.7', installed: false, icon: Lock, tags: ['Encryption', 'Disk'], installCmd: 'apt install veracrypt', configSnippet: 'veracrypt -t -c' },
   { id: 'wireshark', name: 'Wireshark', category: 'SECURITY', description: 'Network protocol analyzer.', version: '4.2.3', installed: false, icon: Search, tags: ['Network', 'Audit'], installCmd: 'apt-get install wireshark', configSnippet: 'wireshark' },
   { id: 'openvpn', name: 'OpenVPN', category: 'SECURITY', description: 'Robust and highly flexible VPN daemon.', version: '2.6.9', installed: true, icon: Lock, tags: ['VPN', 'Tunnel'], installCmd: 'apt-get install openvpn', configSnippet: 'openvpn --config client.ovpn' },
   { id: 'pfsense', name: 'pfSense', category: 'SECURITY', description: 'Firewall and router software.', version: '2.7.2', installed: false, icon: Shield, tags: ['Firewall'], installCmd: 'Install via ISO', configSnippet: 'pfctl -s rules' },
@@ -174,6 +194,34 @@ def process_invoice_image(invoice_id, image_path):
             
     return f"Invoice {invoice_id} processed successfully."
 `
+    },
+    {
+        id: 'sol-siem',
+        title: 'Open Source SIEM Stack',
+        description: 'Build a comprehensive Security Information and Event Management system using Security Onion, OSSEC, and Wazuh.',
+        useCase: 'Enterprise security monitoring requiring low cost but high fidelity intrusion detection, log analysis, and file integrity monitoring across a hybrid cloud environment.',
+        frameworks: ['Security Onion', 'OSSEC', 'Wazuh', 'Elasticsearch'],
+        complexity: 'High',
+        codeSnippet: `
+# 1. Wazuh Manager Installation (Docker)
+docker run -d -p 443:443 -p 1514:1514/udp -p 55000:55000 \\
+  -v /var/ossec/data:/var/ossec/data \\
+  --name wazuh-manager wazuh/wazuh:4.7.2
+
+# 2. OSSEC Agent Configuration
+<agent_config>
+  <syscheck>
+    <!-- File Integrity Monitoring -->
+    <directories check_all="yes" realtime="yes">/etc,/usr/bin</directories>
+  </syscheck>
+  <active-response>
+    <command>firewall-drop</command>
+    <location>local</location>
+  </active-response>
+</agent_config>
+
+# 3. Security Onion Setup
+sudo so-setup # Sensor mode`
     },
 ];
 
@@ -293,12 +341,12 @@ const PackageCenter: React.FC = () => {
                         {[
                             { id: 'ALL', label: 'All', icon: Box },
                             { id: 'QUANTUM', label: 'Quantum', icon: Atom },
+                            { id: 'DATA', label: 'Data & AI', icon: Database },
                             { id: 'OS', label: 'OS & Kernel', icon: Cpu },
                             { id: 'SERVER', label: 'Servers', icon: Server },
                             { id: 'WEB', label: 'Web Dev', icon: Code },
                             { id: 'MOBILE', label: 'Mobile & Edge', icon: Smartphone },
                             { id: 'MARKETING', label: 'Marketing', icon: Megaphone },
-                            { id: 'DATA', label: 'AI & Data', icon: Database },
                             { id: 'DEVOPS', label: 'DevOps', icon: Layers },
                             { id: 'APP', label: 'Apps', icon: Layout },
                             { id: 'DEV', label: 'Dev Tools', icon: Terminal },
@@ -360,7 +408,7 @@ const PackageCenter: React.FC = () => {
                 </div>
             )}
 
-            {/* ... Other Views (Guide, Magic Box, Solutions) - Kept Same ... */}
+            {/* ... Other Views ... */}
             {activeView === 'GUIDE' && (
                 <div className="h-full flex">
                      {/* Sidebar */}

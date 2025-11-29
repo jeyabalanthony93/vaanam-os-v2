@@ -102,8 +102,8 @@ export const runIdeCode = async (code: string, language: string): Promise<string
             config: {
                 systemInstruction: `You are a cloud IDE runtime with access to a rich ecosystem of libraries.
                 Pre-installed Libraries include:
-                - Web: Django, Flask, FastAPI, Requests, Scrapy, Tornado
-                - Data: NumPy, Pandas, Scikit-learn, TensorFlow, PyTorch, Matplotlib, Seaborn, NLTK, spaCy
+                - Web: Django, Flask, FastAPI, Requests, Scrapy, Tornado, Pathway
+                - Data: NumPy, Pandas, Scikit-learn, TensorFlow, PyTorch, Matplotlib, Seaborn, NLTK, spaCy, yfinance, pandas-ta
                 - DevOps: Ansible, Selenium, Docker Compose
                 - Core: SQLAlchemy, Celery, Beautiful Soup, Click, Pillow
                 
@@ -1106,3 +1106,22 @@ export const mcpToolExecution = async (tool: string, args: any): Promise<any> =>
 
     return { tool, status: 'error', message: 'Tool not found' };
 };
+
+// --- API REGISTRATION & ALERTS ---
+export const registerThirdPartyService = async (serviceName: string, email: string): Promise<{status: string, key: string}> => {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    return {
+        status: 'REGISTERED',
+        key: `sk_${serviceName.substring(0,3).toUpperCase()}_${Math.random().toString(36).substring(7)}`
+    };
+}
+
+export const getLiveAlerts = async (): Promise<any[]> => {
+    await new Promise(resolve => setTimeout(resolve, 800));
+    return [
+        { id: 1, source: 'Alpha Vantage', type: 'FINANCE', msg: 'NVDA crossed $900 (RSI: 72)', time: 'Just now', priority: 'HIGH' },
+        { id: 2, source: 'OpenWeatherMap', type: 'WEATHER', msg: 'Heavy Rain Alert for San Francisco', time: '5m ago', priority: 'MEDIUM' },
+        { id: 3, source: 'NewsAPI', type: 'NEWS', msg: 'Breaking: Open Source AI Alliance announces new standards', time: '12m ago', priority: 'LOW' },
+        { id: 4, source: 'Pathway', type: 'SYSTEM', msg: 'Real-time stream processing latency < 2ms', time: '15m ago', priority: 'INFO' }
+    ];
+}
