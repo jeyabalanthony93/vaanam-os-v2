@@ -29,6 +29,7 @@ export enum AppView {
   MEGAM_AUTOMATE = 'MEGAM_AUTOMATE',
   MEGAM_STUDIO = 'MEGAM_STUDIO',
   MEGAM_CAMPUS = 'MEGAM_CAMPUS',
+  BADAL_MAIL = 'BADAL_MAIL',
 }
 
 export interface WindowState {

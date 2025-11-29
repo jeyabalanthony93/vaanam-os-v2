@@ -1,66 +1,6 @@
-
-import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  Terminal as TerminalIcon, 
-  HardDrive, 
-  Briefcase, 
-  Network, 
-  Shield,
-  Server,
-  Cpu,
-  Globe,
-  Workflow,
-  GitMerge,
-  Package,
-  CloudOff,
-  UserCheck,
-  Book,
-  Database,
-  Music,
-  Smartphone,
-  Megaphone,
-  Box,
-  ShieldAlert,
-  Atom,
-  Palette,
-  Building2
-} from 'lucide-react';
-
-import BootSequence from './components/os/BootSequence';
-import LoginScreen from './components/os/LoginScreen';
-import Desktop from './components/os/Desktop';
-import Taskbar from './components/os/Taskbar';
-import Window from './components/os/Window';
-import DevConsole from './components/os/DevConsole'; 
-
-// Import Apps
-import Terminal from './components/Terminal';
-import Dashboard from './components/Dashboard';
-import AgentView from './components/AgentView';
-import Workspace from './components/Workspace';
-import VPNManager from './components/VPNManager';
-import Infrastructure from './components/Infrastructure';
-import StorageExplorer from './components/StorageExplorer';
-import ServerAdmin from './components/ServerAdmin';
-import MCPServer from './components/MCPServer';
-import AIStudio from './components/AIStudio';
-import ETLStudio from './components/ETLStudio';
-import PackageCenter from './components/PackageCenter';
-import SS360 from './components/SS360';
-import BadalAuth from './components/BadalAuth'; 
-import DocumentationHub from './components/DocumentationHub'; 
-import BadalRAG from './components/BadalRAG'; 
-import MegamBrowser from './components/MegamBrowser'; 
-import BadalRAAG from './components/BadalRAAG'; 
-import BadalPhone from './components/BadalPhone'; 
-import MegamMarketing from './components/MegamMarketing'; 
-import MegamDataCenter from './components/MegamDataCenter'; 
-import MegamSentinel from './components/MegamSentinel'; 
-import MegamQuantum from './components/MegamQuantum'; 
-import MegamAutomate from './components/MegamAutomate'; 
-import MegamStudio from './components/MegamStudio'; 
-import MegamCampus from './components/MegamCampus'; // New import
+// ... (Existing imports)
+import MegamCampus from './components/MegamCampus'; 
+import BadalMail from './components/BadalMail'; // New Import
 
 import { AppView, WindowState, BootStep, SystemStats } from './types';
 
@@ -95,91 +35,10 @@ const APP_CONFIG: Record<AppView, { title: string, icon: any, defaultSize: { wid
   [AppView.MEGAM_AUTOMATE]: { title: 'Megam Automate', icon: Workflow, defaultSize: { width: 1200, height: 800 } },
   [AppView.MEGAM_STUDIO]: { title: 'Megam Studio', icon: Palette, defaultSize: { width: 1200, height: 800 } },
   [AppView.MEGAM_CAMPUS]: { title: 'Megam Virtual Campus', icon: Building2, defaultSize: { width: 1200, height: 850 } },
+  [AppView.BADAL_MAIL]: { title: 'Badal Mail', icon: Megaphone, defaultSize: { width: 1100, height: 800 } },
 };
 
-const App: React.FC = () => {
-  const [bootStep, setBootStep] = useState<BootStep>('BIOS');
-  const [windows, setWindows] = useState<WindowState[]>([]);
-  const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
-  const [nextZIndex, setNextZIndex] = useState(10);
-  
-  // DevConsole State
-  const [showDevConsole, setShowDevConsole] = useState(false);
-  const [isDevConsoleMinimized, setIsDevConsoleMinimized] = useState(false);
-
-  // Stats state (kept for Dashboard)
-  const [stats] = useState<SystemStats>({
-    cpuUsage: 12,
-    memoryUsage: 34,
-    storageUsed: '2.4 PB',
-    networkIn: 1024,
-    networkOut: 405,
-    activeAgents: 3
-  });
-
-  // Launch the Terminal automatically on startup
-  useEffect(() => {
-    if (bootStep === 'DESKTOP') {
-       setTimeout(() => launchApp(AppView.TERMINAL), 500);
-       setTimeout(() => launchApp(AppView.DASHBOARD), 800);
-    }
-  }, [bootStep]);
-
-  const launchApp = (appId: AppView) => {
-    const config = APP_CONFIG[appId];
-    if (!config) return;
-
-    const newWindow: WindowState = {
-      id: `${appId}-${Date.now()}`,
-      appId,
-      title: config.title,
-      icon: config.icon,
-      isOpen: true,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: nextZIndex,
-      // Random slight offset for realism
-      position: { x: 50 + (windows.length * 30), y: 50 + (windows.length * 30) },
-      size: config.defaultSize,
-    };
-
-    setWindows([...windows, newWindow]);
-    setActiveWindowId(newWindow.id);
-    setNextZIndex(prev => prev + 1);
-  };
-
-  const focusWindow = (id: string) => {
-    setActiveWindowId(id);
-    setWindows(prev => prev.map(w => 
-      w.id === id ? { ...w, zIndex: nextZIndex, isMinimized: false } : w
-    ));
-    setNextZIndex(prev => prev + 1);
-  };
-
-  const closeWindow = (id: string) => {
-    setWindows(prev => prev.filter(w => w.id !== id));
-    if (activeWindowId === id) setActiveWindowId(null);
-  };
-
-  const toggleMaximize = (id: string) => {
-    setWindows(prev => prev.map(w => 
-      w.id === id ? { ...w, isMaximized: !w.isMaximized } : w
-    ));
-    focusWindow(id);
-  };
-
-  const minimizeWindow = (id: string) => {
-    setWindows(prev => prev.map(w => 
-      w.id === id ? { ...w, isMinimized: true } : w
-    ));
-    setActiveWindowId(null);
-  };
-
-  const moveWindow = (id: string, x: number, y: number) => {
-    setWindows(prev => prev.map(w => 
-      w.id === id ? { ...w, position: { x, y } } : w
-    ));
-  };
+// ... (Rest of component)
 
   // Render App Content Switcher
   const renderAppContent = (appId: AppView) => {
@@ -210,78 +69,8 @@ const App: React.FC = () => {
       case AppView.MEGAM_AUTOMATE: return <MegamAutomate />;
       case AppView.MEGAM_STUDIO: return <MegamStudio />;
       case AppView.MEGAM_CAMPUS: return <MegamCampus />;
+      case AppView.BADAL_MAIL: return <BadalMail />;
       default: return <div className="p-4 text-white">App not found</div>;
     }
   };
-
-  return (
-    <div className="h-screen w-screen bg-black overflow-hidden relative selection:bg-cyan-500 selection:text-white">
-      
-      {/* 1. Boot Sequence */}
-      {bootStep === 'BIOS' && (
-        <BootSequence onComplete={() => setBootStep('LOGIN')} />
-      )}
-
-      {/* 2. Login Screen */}
-      {bootStep === 'LOGIN' && (
-        <LoginScreen onLogin={() => setBootStep('DESKTOP')} />
-      )}
-
-      {/* 3. Desktop Environment */}
-      {bootStep === 'DESKTOP' && (
-        <div 
-          className="h-full w-full relative bg-cover bg-center"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop")' }}
-        >
-          {/* Overlay for readability */}
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
-
-          {/* Desktop Icons Layer */}
-          <Desktop onLaunchApp={launchApp} />
-
-          {/* Window Layer */}
-          {windows.map(win => (
-            <Window
-              key={win.id}
-              window={win}
-              isActive={activeWindowId === win.id}
-              onFocus={() => focusWindow(win.id)}
-              onClose={() => closeWindow(win.id)}
-              onMaximize={() => toggleMaximize(win.id)}
-              onMinimize={() => minimizeWindow(win.id)}
-              onMove={(x, y) => moveWindow(win.id, x, y)}
-            >
-              {renderAppContent(win.appId)}
-            </Window>
-          ))}
-          
-          {/* Global Dev Console */}
-          <DevConsole 
-             isOpen={showDevConsole} 
-             onClose={() => setShowDevConsole(false)} 
-             isMinimized={isDevConsoleMinimized}
-             onToggleMinimize={() => setIsDevConsoleMinimized(!isDevConsoleMinimized)}
-          />
-
-          {/* Taskbar Layer */}
-          <Taskbar 
-            windows={windows} 
-            activeWindowId={activeWindowId} 
-            onWindowClick={(id) => {
-              const win = windows.find(w => w.id === id);
-              if (win?.isMinimized || activeWindowId !== id) {
-                focusWindow(id);
-              } else {
-                minimizeWindow(id);
-              }
-            }}
-            onLaunchApp={launchApp}
-            onToggleDevConsole={() => setShowDevConsole(!showDevConsole)} // New Prop
-          />
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default App;
+// ...

@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, Network, Play, CircleDashed, Users, Briefcase, Cpu, LineChart, Palette, Globe, Shield, Database, Sparkles, BrainCircuit, Code, Settings, MessageSquare, BarChart, Save, RefreshCw, Layers, Upload, Zap, Activity, AlertTriangle, CheckCircle2, XCircle, Bell, Workflow, Wand2, Info, ArrowRight, DollarSign, TrendingUp, UserPlus, Phone, Video, Mic, Key, Terminal, Server, Lock, Monitor, Box, Mail, Fingerprint, ShieldAlert, Plug, Wifi, Clock, CheckSquare, Search, GitMerge, MousePointer2, FileText, User, Download, Send, Power, RefreshCcw, Lightbulb, File, Sliders, UserCheck, GitBranch, Edit3 } from 'lucide-react';
+import { Bot, Network, Play, CircleDashed, Users, Briefcase, Cpu, LineChart, Palette, Globe, Shield, Database, Sparkles, BrainCircuit, Code, Settings, MessageSquare, BarChart, Save, RefreshCw, Layers, Upload, Zap, Activity, AlertTriangle, CheckCircle2, XCircle, Bell, Workflow, Wand2, Info, ArrowRight, DollarSign, TrendingUp, UserPlus, Phone, Video, Mic, Key, Terminal, Server, Lock, Monitor, Box, Mail, Fingerprint, ShieldAlert, Plug, Wifi, Clock, CheckSquare, Search, GitMerge, MousePointer2, FileText, User, Download, Send, Power, RefreshCcw, Lightbulb, File, Sliders, UserCheck, GitBranch, Edit3, Trash2, Plus } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from 'recharts';
-import { Agent, AgentRole, AgentMetrics, AgentConfig, AgentWorkflow, AgentIntegration, AgentCapability, WorkstationState, HFModel, AgentTask, AgentHierarchyNode } from '../types';
+import { Agent, AgentRole, AgentMetrics, AgentConfig, AgentWorkflow, AgentIntegration, AgentCapability, WorkstationState, HFModel, AgentTask, AgentHierarchyNode, AgentAsset } from '../types';
 import { simulateAgentResponse, generateAgentSystemPrompt, simulateLeadGeneration, fetchHFModels, executeAgentTask, getAgentAutomationSuggestions, generateAgentReport, mcpToolExecution } from '../services/geminiService';
 import MegamStudio from './MegamStudio';
 import MegamAutomate from './MegamAutomate';
@@ -136,6 +136,18 @@ const AgentView: React.FC = () => {
       setIsLoggedIn(false);
       setCurrentAgentId(null);
       setViewMode('DASHBOARD');
+  };
+
+  const updateAgentWorkstation = (updates: Partial<WorkstationState>) => {
+      setAgents(prev => prev.map(a => {
+          if (a.id === currentAgentId && a.workstation) {
+              return {
+                  ...a,
+                  workstation: { ...a.workstation, ...updates }
+              };
+          }
+          return a;
+      }));
   };
 
   const handleExecuteTask = async () => {
@@ -624,6 +636,153 @@ const AgentView: React.FC = () => {
                                         <input type="range" min="0" max="1" step="0.1" className="flex-1 accent-teal-500"/>
                                         <span className="text-white font-mono bg-slate-950 px-2 py-1 rounded border border-slate-700 text-xs">0.7</span>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Workstation Configuration */}
+                        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                            <h3 className="font-bold text-white mb-6 flex items-center gap-2">
+                                <Monitor size={20} className="text-blue-400"/> Workstation Configuration
+                            </h3>
+                            
+                            {/* Basic Info */}
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div>
+                                    <label className="text-xs font-bold text-slate-500 uppercase block mb-2">OS Version</label>
+                                    <input 
+                                        value={currentAgent?.workstation?.osVersion || ''}
+                                        onChange={e => updateAgentWorkstation({ osVersion: e.target.value })}
+                                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-white outline-none focus:border-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-slate-500 uppercase block mb-2">IP Address</label>
+                                    <input 
+                                        value={currentAgent?.workstation?.ipAddress || ''}
+                                        onChange={e => updateAgentWorkstation({ ipAddress: e.target.value })}
+                                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-white font-mono outline-none focus:border-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-slate-500 uppercase block mb-2">Uptime</label>
+                                    <input 
+                                        value={currentAgent?.workstation?.uptime || ''}
+                                        onChange={e => updateAgentWorkstation({ uptime: e.target.value })}
+                                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-white outline-none focus:border-blue-500"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Installed Software */}
+                            <div className="mb-6">
+                                <label className="text-xs font-bold text-slate-500 uppercase block mb-2">Installed Software</label>
+                                <div className="space-y-2">
+                                    {currentAgent?.workstation?.installedSoftware.map((sw, i) => (
+                                        <div key={i} className="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
+                                            <span className="text-sm text-slate-300">{sw}</span>
+                                            <button onClick={() => {
+                                                const newSw = currentAgent?.workstation?.installedSoftware.filter((_, idx) => idx !== i);
+                                                updateAgentWorkstation({ installedSoftware: newSw });
+                                            }} className="text-slate-500 hover:text-red-400"><Trash2 size={14}/></button>
+                                        </div>
+                                    ))}
+                                    <div className="flex gap-2">
+                                        <input 
+                                            className="flex-1 bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white outline-none focus:border-blue-500"
+                                            placeholder="Add package..."
+                                            onKeyDown={e => {
+                                                if(e.key === 'Enter') {
+                                                    const val = e.currentTarget.value;
+                                                    if(val) {
+                                                        const newSw = [...(currentAgent?.workstation?.installedSoftware || []), val];
+                                                        updateAgentWorkstation({ installedSoftware: newSw });
+                                                        e.currentTarget.value = '';
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Agent Assets */}
+                            <div className="mb-6">
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Agent Assets</label>
+                                    <button 
+                                        onClick={() => {
+                                            const name = prompt("Asset Name");
+                                            if (name) {
+                                                const newAsset: AgentAsset = {
+                                                    id: Date.now().toString(),
+                                                    type: 'LICENSE', // Default type
+                                                    name: name,
+                                                    detail: 'New Asset',
+                                                    status: 'ACTIVE'
+                                                };
+                                                const newAssets = [...(currentAgent?.workstation?.assets || []), newAsset];
+                                                updateAgentWorkstation({ assets: newAssets });
+                                            }
+                                        }}
+                                        className="text-xs text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1"
+                                    >
+                                        <Plus size={12}/> Add Asset
+                                    </button>
+                                </div>
+                                <div className="space-y-2">
+                                    {currentAgent?.workstation?.assets?.map((asset, i) => (
+                                        <div key={i} className="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs font-bold text-slate-400 bg-slate-900 px-2 rounded border border-slate-700">{asset.type}</span>
+                                                <span className="text-sm text-slate-300">{asset.name}</span>
+                                            </div>
+                                            <button onClick={() => {
+                                                const newAssets = currentAgent?.workstation?.assets.filter(a => a.id !== asset.id);
+                                                updateAgentWorkstation({ assets: newAssets });
+                                            }} className="text-slate-500 hover:text-red-400"><Trash2 size={14}/></button>
+                                        </div>
+                                    ))}
+                                    {(!currentAgent?.workstation?.assets || currentAgent.workstation.assets.length === 0) && (
+                                        <div className="text-xs text-slate-600 italic p-2">No assets assigned.</div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Webhooks */}
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Webhooks</label>
+                                    <button 
+                                        onClick={() => {
+                                            const url = prompt("Webhook URL");
+                                            if (url) {
+                                                const newWebhook = { url, active: true, event: 'all' };
+                                                const newWebhooks = [...(currentAgent?.workstation?.webhooks || []), newWebhook];
+                                                updateAgentWorkstation({ webhooks: newWebhooks });
+                                            }
+                                        }}
+                                        className="text-xs text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1"
+                                    >
+                                        <Plus size={12}/> Add Hook
+                                    </button>
+                                </div>
+                                <div className="space-y-2">
+                                    {currentAgent?.workstation?.webhooks?.map((hook, i) => (
+                                        <div key={i} className="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
+                                            <div className="flex items-center gap-2 truncate flex-1 mr-2">
+                                                <div className={`w-2 h-2 rounded-full ${hook.active ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                                                <span className="text-xs text-slate-400 font-mono truncate">{hook.url}</span>
+                                            </div>
+                                            <button onClick={() => {
+                                                const newWebhooks = currentAgent?.workstation?.webhooks.filter((_, idx) => idx !== i);
+                                                updateAgentWorkstation({ webhooks: newWebhooks });
+                                            }} className="text-slate-500 hover:text-red-400"><Trash2 size={14}/></button>
+                                        </div>
+                                    ))}
+                                    {(!currentAgent?.workstation?.webhooks || currentAgent.workstation.webhooks.length === 0) && (
+                                        <div className="text-xs text-slate-600 italic p-2">No webhooks configured.</div>
+                                    )}
                                 </div>
                             </div>
                         </div>
