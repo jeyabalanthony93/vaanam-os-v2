@@ -1,6 +1,45 @@
-// ... (Existing imports)
-import MegamCampus from './components/MegamCampus'; 
-import BadalMail from './components/BadalMail'; // New Import
+
+import React, { useState, useEffect } from 'react';
+import { 
+  LayoutDashboard, Terminal as TerminalIcon, HardDrive, Briefcase, Network, Shield, Cpu, 
+  Server, Globe, Workflow, GitMerge, Package, CloudOff, UserCheck, Book, Database, 
+  Music, Smartphone, Megaphone, Box, ShieldAlert, Atom, Palette, Building2, Mail
+} from 'lucide-react';
+
+import Terminal from './components/Terminal';
+import Dashboard from './components/Dashboard';
+import ServerAdmin from './components/ServerAdmin';
+import Workspace from './components/Workspace';
+import StorageExplorer from './components/StorageExplorer';
+import Infrastructure from './components/Infrastructure';
+import VPNManager from './components/VPNManager';
+import AgentView from './components/AgentView';
+import MCPServer from './components/MCPServer';
+import AIStudio from './components/AIStudio';
+import ETLStudio from './components/ETLStudio';
+import PackageCenter from './components/PackageCenter';
+import SS360 from './components/SS360';
+import BadalAuth from './components/BadalAuth';
+import DocumentationHub from './components/DocumentationHub';
+import BadalRAG from './components/BadalRAG';
+import BadalRAAG from './components/BadalRAAG';
+import BadalPhone from './components/BadalPhone';
+import MegamBrowser from './components/MegamBrowser';
+import MegamMarketing from './components/MegamMarketing';
+import MegamDataCenter from './components/MegamDataCenter';
+import MegamSentinel from './components/MegamSentinel';
+import MegamQuantum from './components/MegamQuantum';
+import MegamAutomate from './components/MegamAutomate';
+import MegamStudio from './components/MegamStudio';
+import MegamCampus from './components/MegamCampus';
+import BadalMail from './components/BadalMail';
+
+import Taskbar from './components/os/Taskbar';
+import Desktop from './components/os/Desktop';
+import Window from './components/os/Window';
+import BootSequence from './components/os/BootSequence';
+import LoginScreen from './components/os/LoginScreen';
+import DevConsole from './components/os/DevConsole';
 
 import { AppView, WindowState, BootStep, SystemStats } from './types';
 
@@ -35,10 +74,67 @@ const APP_CONFIG: Record<AppView, { title: string, icon: any, defaultSize: { wid
   [AppView.MEGAM_AUTOMATE]: { title: 'Megam Automate', icon: Workflow, defaultSize: { width: 1200, height: 800 } },
   [AppView.MEGAM_STUDIO]: { title: 'Megam Studio', icon: Palette, defaultSize: { width: 1200, height: 800 } },
   [AppView.MEGAM_CAMPUS]: { title: 'Megam Virtual Campus', icon: Building2, defaultSize: { width: 1200, height: 850 } },
-  [AppView.BADAL_MAIL]: { title: 'Badal Mail', icon: Megaphone, defaultSize: { width: 1100, height: 800 } },
+  [AppView.BADAL_MAIL]: { title: 'Badal Mail', icon: Mail, defaultSize: { width: 1100, height: 800 } },
 };
 
-// ... (Rest of component)
+const App: React.FC = () => {
+  const [bootStep, setBootStep] = useState<BootStep>('BIOS');
+  const [windows, setWindows] = useState<WindowState[]>([]);
+  const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isDevConsoleOpen, setIsDevConsoleOpen] = useState(false);
+  const [isDevConsoleMinimized, setIsDevConsoleMinimized] = useState(false);
+
+  // System Stats Simulation
+  const [stats, setStats] = useState<SystemStats>({
+    cpuUsage: 12,
+    memoryUsage: 24,
+    storageUsed: '2.1 TB',
+    networkIn: 45,
+    networkOut: 120,
+    activeAgents: 4
+  });
+
+  useEffect(() => {
+    // Simulate Boot
+    if (bootStep === 'BIOS') {
+        // BootSequence component handles its own timing and calls onComplete
+    }
+  }, [bootStep]);
+
+  const launchApp = (appId: AppView) => {
+    const config = APP_CONFIG[appId];
+    const newWindow: WindowState = {
+      id: Date.now().toString(),
+      appId,
+      title: config.title,
+      icon: config.icon,
+      isOpen: true,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: windows.length + 1,
+      position: { x: 50 + (windows.length * 30), y: 50 + (windows.length * 30) },
+      size: config.defaultSize
+    };
+    setWindows([...windows, newWindow]);
+    setActiveWindowId(newWindow.id);
+  };
+
+  const closeWindow = (id: string) => {
+    setWindows(windows.filter(w => w.id !== id));
+    if (activeWindowId === id) {
+      setActiveWindowId(null);
+    }
+  };
+
+  const focusWindow = (id: string) => {
+    setActiveWindowId(id);
+    setWindows(windows.map(w => w.id === id ? { ...w, zIndex: Math.max(...windows.map(win => win.zIndex)) + 1 } : w));
+  };
+
+  const updateWindow = (id: string, updates: Partial<WindowState>) => {
+    setWindows(windows.map(w => w.id === id ? { ...w, ...updates } : w));
+  };
 
   // Render App Content Switcher
   const renderAppContent = (appId: AppView) => {
@@ -73,4 +169,64 @@ const APP_CONFIG: Record<AppView, { title: string, icon: any, defaultSize: { wid
       default: return <div className="p-4 text-white">App not found</div>;
     }
   };
-// ...
+
+  if (bootStep === 'BIOS' || bootStep === 'BOOT_LOG') {
+      return <BootSequence onComplete={() => setBootStep('LOGIN')} />;
+  }
+
+  if (bootStep === 'LOGIN') {
+      return <LoginScreen onLogin={() => setBootStep('DESKTOP')} />;
+  }
+
+  return (
+    <div className="h-screen w-screen overflow-hidden bg-cover bg-center font-sans text-slate-200 select-none" style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop")' }}>
+      
+      {/* Desktop Area */}
+      <Desktop onLaunchApp={launchApp} />
+
+      {/* Windows */}
+      {windows.map(win => (
+        <Window
+          key={win.id}
+          window={win}
+          isActive={activeWindowId === win.id}
+          onFocus={() => focusWindow(win.id)}
+          onClose={() => closeWindow(win.id)}
+          onMinimize={() => updateWindow(win.id, { isMinimized: true })}
+          onMaximize={() => updateWindow(win.id, { isMaximized: !win.isMaximized })}
+          onMove={(x, y) => updateWindow(win.id, { position: { x, y } })}
+        >
+          {renderAppContent(win.appId)}
+        </Window>
+      ))}
+
+      {/* Developer Console Overlay */}
+      <DevConsole 
+        isOpen={isDevConsoleOpen} 
+        onClose={() => setIsDevConsoleOpen(false)}
+        isMinimized={isDevConsoleMinimized}
+        onToggleMinimize={() => setIsDevConsoleMinimized(!isDevConsoleMinimized)}
+      />
+
+      {/* Taskbar */}
+      <div className="absolute bottom-0 w-full z-50">
+          <Taskbar 
+            activeApp={activeWindowId ? windows.find(w => w.id === activeWindowId)?.appId || null : null}
+            menuOpen={menuOpen}
+            setMenuOpen={setMenuOpen}
+            onLaunchApp={launchApp}
+          />
+      </div>
+
+      {/* Hidden Trigger for Dev Console (Ctrl + `) */}
+      <div 
+        className="fixed top-0 right-0 p-2 opacity-0 hover:opacity-100 transition cursor-pointer z-[100]"
+        onClick={() => setIsDevConsoleOpen(true)}
+      >
+          <TerminalIcon size={16} className="text-white/50"/>
+      </div>
+    </div>
+  );
+}
+
+export default App;

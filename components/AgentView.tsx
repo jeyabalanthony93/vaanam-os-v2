@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bot, Network, Play, CircleDashed, Users, Briefcase, Cpu, LineChart, Palette, Globe, Shield, Database, Sparkles, BrainCircuit, Code, Settings, MessageSquare, BarChart, Save, RefreshCw, Layers, Upload, Zap, Activity, AlertTriangle, CheckCircle2, XCircle, Bell, Workflow, Wand2, Info, ArrowRight, DollarSign, TrendingUp, UserPlus, Phone, Video, Mic, Key, Terminal, Server, Lock, Monitor, Box, Mail, Fingerprint, ShieldAlert, Plug, Wifi, Clock, CheckSquare, Search, GitMerge, MousePointer2, FileText, User, Download, Send, Power, RefreshCcw, Lightbulb, File, Sliders, UserCheck, GitBranch, Edit3, Trash2, Plus } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar } from 'recharts';
 import { Agent, AgentRole, AgentMetrics, AgentConfig, AgentWorkflow, AgentIntegration, AgentCapability, WorkstationState, HFModel, AgentTask, AgentHierarchyNode, AgentAsset } from '../types';
-import { simulateAgentResponse, generateAgentSystemPrompt, simulateLeadGeneration, fetchHFModels, executeAgentTask, getAgentAutomationSuggestions, generateAgentReport, mcpToolExecution } from '../services/geminiService';
+import { simulateAgentResponse, generateAgentSystemPrompt, fetchHFModels, executeAgentTask, getAgentAutomationSuggestions, generateAgentReport, mcpToolExecution } from '../services/geminiService';
 import MegamStudio from './MegamStudio';
 import MegamAutomate from './MegamAutomate';
 import MegamMarketing from './MegamMarketing';

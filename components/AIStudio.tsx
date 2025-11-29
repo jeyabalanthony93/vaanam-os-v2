@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Network, Database, Play, Save, Settings, Layers, FileText, Zap, Box, ArrowRight, Terminal, RefreshCw, UploadCloud, Search, Plus, Trash2, Cpu, Library, Download, ThumbsUp, Activity, GitBranch, Share2, BarChart3, Sliders, Lock, Code, CheckCircle2, Copy, BrainCircuit, X, File, Bot, GraduationCap, MousePointer2, Users, HardDrive, Server } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { runSuckChainPipeline, compileSuckChainCode, simulateLLMTraining, simulateRAGIngestion, simulateAdvancedTrainingMetrics, simulateIQTest, simulateAgentCollaboration, simulateDataIngestion, deployInferenceServer, uploadCustomModel } from '../services/geminiService';
+import { compileSuckChainCode, simulateLLMTraining, simulateRAGIngestion, simulateAdvancedTrainingMetrics, simulateIQTest, simulateAgentCollaboration, simulateDataIngestion, deployInferenceServer, uploadCustomModel } from '../services/geminiService';
 import { ChainNode, RAGIndex, ModelHubItem, FineTuneJob, LLMArchitecture, IQScore } from '../types';
 
 const AIStudio: React.FC = () => {
