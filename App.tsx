@@ -1,11 +1,13 @@
-
+// ... existing imports ...
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Terminal as TerminalIcon, HardDrive, Briefcase, Network, Shield, Cpu, 
   Server, Globe, Workflow, GitMerge, Package, CloudOff, UserCheck, Book, Database, 
-  Music, Smartphone, Megaphone, Box, ShieldAlert, Atom, Palette, Building2, Mail
+  Music, Smartphone, Megaphone, Box, ShieldAlert, Atom, Palette, Building2, Mail,
+  Calculator, Mic, Scan, Plane
 } from 'lucide-react';
 
+// ... existing component imports ...
 import Terminal from './components/Terminal';
 import Dashboard from './components/Dashboard';
 import ServerAdmin from './components/ServerAdmin';
@@ -33,14 +35,20 @@ import MegamAutomate from './components/MegamAutomate';
 import MegamStudio from './components/MegamStudio';
 import MegamCampus from './components/MegamCampus';
 import BadalMail from './components/BadalMail';
+// NEW IMPORTS
+import MegamCalculator from './components/MegamCalculator';
+import MegamAssistant from './components/MegamAssistant';
+import MegamScanner from './components/MegamScanner';
+import MegamTravel from './components/MegamTravel';
 
-import Taskbar from './components/os/Taskbar';
-import Desktop from './components/os/Desktop';
-import Window from './components/os/Window';
 import BootSequence from './components/os/BootSequence';
 import LoginScreen from './components/os/LoginScreen';
+import Desktop from './components/os/Desktop';
+import Window from './components/os/Window';
+import Taskbar from './components/os/Taskbar';
 import DevConsole from './components/os/DevConsole';
 
+// ... types import ...
 import { AppView, WindowState, BootStep, SystemStats } from './types';
 
 // App Registry for Icon/Title mapping
@@ -56,7 +64,7 @@ const APP_CONFIG: Record<AppView, { title: string, icon: any, defaultSize: { wid
   [AppView.MCP_SERVER]: { title: 'SWGI & MCP Server', icon: Globe, defaultSize: { width: 1000, height: 750 } },
   [AppView.SETTINGS]: { title: 'Settings', icon: Server, defaultSize: { width: 600, height: 500 } },
   [AppView.BROWSER]: { title: 'Megam Browser', icon: Globe, defaultSize: { width: 1000, height: 700 } },
-  [AppView.CALCULATOR]: { title: 'Calculator', icon: Server, defaultSize: { width: 300, height: 400 } },
+  [AppView.CALCULATOR]: { title: 'Calculator', icon: Calculator, defaultSize: { width: 320, height: 480 } },
   [AppView.NETWORK]: { title: 'Network', icon: Network, defaultSize: { width: 800, height: 600 } },
   [AppView.AI_STUDIO]: { title: 'SuckChain Studio', icon: Workflow, defaultSize: { width: 1200, height: 800 } },
   [AppView.ETL]: { title: 'SuckSaas ETL Studio', icon: GitMerge, defaultSize: { width: 1200, height: 800 } },
@@ -75,17 +83,21 @@ const APP_CONFIG: Record<AppView, { title: string, icon: any, defaultSize: { wid
   [AppView.MEGAM_STUDIO]: { title: 'Megam Studio', icon: Palette, defaultSize: { width: 1200, height: 800 } },
   [AppView.MEGAM_CAMPUS]: { title: 'Megam Virtual Campus', icon: Building2, defaultSize: { width: 1200, height: 850 } },
   [AppView.BADAL_MAIL]: { title: 'Badal Mail', icon: Mail, defaultSize: { width: 1100, height: 800 } },
+  // NEW APPS CONFIG
+  [AppView.MEGAM_ASSISTANT]: { title: 'Aura Assistant', icon: Mic, defaultSize: { width: 400, height: 500 } },
+  [AppView.MEGAM_SCANNER]: { title: 'Megam Scanner', icon: Scan, defaultSize: { width: 600, height: 500 } },
+  [AppView.MEGAM_TRAVEL]: { title: 'Megam Travel', icon: Plane, defaultSize: { width: 1000, height: 700 } },
 };
 
 const App: React.FC = () => {
+  // ... existing state ...
   const [bootStep, setBootStep] = useState<BootStep>('BIOS');
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDevConsoleOpen, setIsDevConsoleOpen] = useState(false);
   const [isDevConsoleMinimized, setIsDevConsoleMinimized] = useState(false);
-
-  // System Stats Simulation
+  
   const [stats, setStats] = useState<SystemStats>({
     cpuUsage: 12,
     memoryUsage: 24,
@@ -95,12 +107,7 @@ const App: React.FC = () => {
     activeAgents: 4
   });
 
-  useEffect(() => {
-    // Simulate Boot
-    if (bootStep === 'BIOS') {
-        // BootSequence component handles its own timing and calls onComplete
-    }
-  }, [bootStep]);
+  // ... existing logic ...
 
   const launchApp = (appId: AppView) => {
     const config = APP_CONFIG[appId];
@@ -122,9 +129,7 @@ const App: React.FC = () => {
 
   const closeWindow = (id: string) => {
     setWindows(windows.filter(w => w.id !== id));
-    if (activeWindowId === id) {
-      setActiveWindowId(null);
-    }
+    if (activeWindowId === id) setActiveWindowId(null);
   };
 
   const focusWindow = (id: string) => {
@@ -139,6 +144,7 @@ const App: React.FC = () => {
   // Render App Content Switcher
   const renderAppContent = (appId: AppView) => {
     switch (appId) {
+      // ... existing cases ...
       case AppView.TERMINAL: return <Terminal />;
       case AppView.DASHBOARD: return <Dashboard stats={stats} />;
       case AppView.SERVER: return <ServerAdmin />;
@@ -166,10 +172,16 @@ const App: React.FC = () => {
       case AppView.MEGAM_STUDIO: return <MegamStudio />;
       case AppView.MEGAM_CAMPUS: return <MegamCampus />;
       case AppView.BADAL_MAIL: return <BadalMail />;
+      // NEW CASES
+      case AppView.CALCULATOR: return <MegamCalculator />;
+      case AppView.MEGAM_ASSISTANT: return <MegamAssistant />;
+      case AppView.MEGAM_SCANNER: return <MegamScanner />;
+      case AppView.MEGAM_TRAVEL: return <MegamTravel />;
       default: return <div className="p-4 text-white">App not found</div>;
     }
   };
 
+  // ... Boot & Login logic ...
   if (bootStep === 'BIOS' || bootStep === 'BOOT_LOG') {
       return <BootSequence onComplete={() => setBootStep('LOGIN')} />;
   }
@@ -180,11 +192,7 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-cover bg-center font-sans text-slate-200 select-none" style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop")' }}>
-      
-      {/* Desktop Area */}
       <Desktop onLaunchApp={launchApp} />
-
-      {/* Windows */}
       {windows.map(win => (
         <Window
           key={win.id}
@@ -199,16 +207,12 @@ const App: React.FC = () => {
           {renderAppContent(win.appId)}
         </Window>
       ))}
-
-      {/* Developer Console Overlay */}
       <DevConsole 
         isOpen={isDevConsoleOpen} 
         onClose={() => setIsDevConsoleOpen(false)}
         isMinimized={isDevConsoleMinimized}
         onToggleMinimize={() => setIsDevConsoleMinimized(!isDevConsoleMinimized)}
       />
-
-      {/* Taskbar */}
       <div className="absolute bottom-0 w-full z-50">
           <Taskbar 
             activeApp={activeWindowId ? windows.find(w => w.id === activeWindowId)?.appId || null : null}
@@ -217,8 +221,6 @@ const App: React.FC = () => {
             onLaunchApp={launchApp}
           />
       </div>
-
-      {/* Hidden Trigger for Dev Console (Ctrl + `) */}
       <div 
         className="fixed top-0 right-0 p-2 opacity-0 hover:opacity-100 transition cursor-pointer z-[100]"
         onClick={() => setIsDevConsoleOpen(true)}

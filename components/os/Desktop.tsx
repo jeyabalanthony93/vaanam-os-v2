@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Briefcase, Globe, HardDrive, CloudOff, Mail, Terminal, Server, Shield, Network, Cpu, Database, Music, Smartphone, Megaphone, Box, ShieldAlert, Atom, Workflow, Palette, Building2 } from 'lucide-react';
+import { Briefcase, Globe, HardDrive, CloudOff, Mail, Terminal, Server, Shield, Network, Cpu, Database, Music, Smartphone, Megaphone, Box, ShieldAlert, Atom, Workflow, Palette, Building2, Calculator, Mic, Scan, Plane } from 'lucide-react';
 import { AppView } from '../../types';
 
 interface DesktopProps {
@@ -43,8 +43,9 @@ const Desktop: React.FC<DesktopProps> = ({ onLaunchApp }) => {
            <DesktopIcon label="Workspace" icon={Briefcase} onClick={() => onLaunchApp(AppView.WORKSPACE)} color="text-emerald-400"/>
            <DesktopIcon label="Browser" icon={Globe} onClick={() => onLaunchApp(AppView.BROWSER)} color="text-indigo-300"/>
            <DesktopIcon label="Storage" icon={HardDrive} onClick={() => onLaunchApp(AppView.FILES)} color="text-blue-400"/>
-           <DesktopIcon label="Offline 360" icon={CloudOff} onClick={() => onLaunchApp(AppView.SS360)} color="text-orange-500"/>
            <DesktopIcon label="Badal Mail" icon={Mail} onClick={() => onLaunchApp(AppView.BADAL_MAIL)} color="text-orange-600"/>
+           <DesktopIcon label="Calculator" icon={Calculator} onClick={() => onLaunchApp(AppView.CALCULATOR)} color="text-gray-300"/>
+           <DesktopIcon label="Travel" icon={Plane} onClick={() => onLaunchApp(AppView.MEGAM_TRAVEL)} color="text-sky-500"/>
        </AppContainer>
 
        <AppContainer title="AI & Development">
@@ -53,12 +54,14 @@ const Desktop: React.FC<DesktopProps> = ({ onLaunchApp }) => {
            <DesktopIcon label="ETL Studio" icon={Database} onClick={() => onLaunchApp(AppView.ETL)} color="text-yellow-400"/>
            <DesktopIcon label="Quantum Lab" icon={Atom} onClick={() => onLaunchApp(AppView.MEGAM_QUANTUM)} color="text-violet-400"/>
            <DesktopIcon label="Automate" icon={Cpu} onClick={() => onLaunchApp(AppView.MEGAM_AUTOMATE)} color="text-cyan-400"/>
+           <DesktopIcon label="Aura Voice" icon={Mic} onClick={() => onLaunchApp(AppView.MEGAM_ASSISTANT)} color="text-rose-500"/>
        </AppContainer>
 
-       <AppContainer title="Creative & Media">
+       <AppContainer title="Creative & Tools">
            <DesktopIcon label="Studio" icon={Palette} onClick={() => onLaunchApp(AppView.MEGAM_STUDIO)} color="text-fuchsia-400"/>
            <DesktopIcon label="BadalRAAG" icon={Music} onClick={() => onLaunchApp(AppView.BADAL_RAAG)} color="text-rose-400"/>
            <DesktopIcon label="Marketing" icon={Megaphone} onClick={() => onLaunchApp(AppView.MEGAM_MARKETING)} color="text-red-500"/>
+           <DesktopIcon label="Scanner" icon={Scan} onClick={() => onLaunchApp(AppView.MEGAM_SCANNER)} color="text-white"/>
        </AppContainer>
 
        <AppContainer title="Enterprise">
